@@ -1,10 +1,11 @@
 from flask import Flask, request, jsonify
 from ai import *
+import base64
 
 app = Flask(__name__)
 
-@app.route('/process_prompt', methods=['POST'])
-def process_prompt():
+@app.route('/input_check', methods=['POST'])
+def input_check():
     if request.method == 'POST':
         # Extract prompt from the received JSON
         data = request.json
@@ -12,7 +13,33 @@ def process_prompt():
         checklist_input = data.get('checklist_input', '')
 
         # Process the prompt (this is where you'd integrate your AI processing logic)
-        response = process_ai(user_input, checklist_input)
+        response = process_w_string(user_input, checklist_input)
+
+        # Return the response in JSON format
+        return jsonify({'sentiment': response[0],'response': response[1]})
+
+
+@app.route('/input_check_file', methods=['POST'])
+def input_check_file():
+    if request.method == 'POST':
+        # Extract prompt from the received JSON
+        data = request.json
+        user_input = data.get('user_input', '')
+        checklist_input = data.get('checklist_input', '')
+
+        pdf_data = data.get('file')  # Extract Base64 encoded PDF data
+        pdf_filename = data.get('filename', 'uploaded.pdf')  # Extract filename, default to 'uploaded.pdf'
+
+        if pdf_data:
+            # Decode the Base64 string to binary data
+            pdf_binary = base64.b64decode(pdf_data)
+
+            # Save the PDF to a file (optional)
+            with open('user_input.pdf', 'wb') as pdf_file:
+                pdf_file.write(pdf_binary)
+
+        # Process the prompt (this is where you'd integrate your AI processing logic)
+        response = process_w_pdf(user_input, checklist_input)
 
         # Return the response in JSON format
         return jsonify({'sentiment': response[0],'response': response[1]})

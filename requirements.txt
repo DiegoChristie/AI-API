@@ -1,2 +1,6 @@
 flask
 langchain_ollama
+sentence_transformers 
+pypdf
+langchain 
+langchain-openai
