@@ -45,8 +45,8 @@ def parse_response(response):
 
     return decision
 
-def process_w_pdf(checklist_input):
-    file_path = "documents/negative_user_input.pdf"
+def process_w_pdf(checklist_input, pdf_filename):
+    file_path = "documents/" + pdf_filename
     loader = PyPDFLoader(file_path)
     docs = loader.load()
 
