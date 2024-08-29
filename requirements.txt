@@ -1,6 +1,8 @@
 flask
 langchain_ollama
-sentence_transformers 
 pypdf
-langchain 
-langchain-openai
+langchain_community
+langchain_chroma
+sentence-transformers
+faiss-cpu
+langchain-huggingface

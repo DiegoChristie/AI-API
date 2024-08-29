@@ -13,7 +13,8 @@ def input_check():
         checklist_input = data.get('checklist_input', '')
 
         # Process the prompt (this is where you'd integrate your AI processing logic)
-        response = process_w_string(user_input, checklist_input)
+        #response = process_w_string(user_input, checklist_input)
+        response = process_w_pdf(checklist_input)
 
         # Return the response in JSON format
         return jsonify({'sentiment': response[0],'response': response[1]})
