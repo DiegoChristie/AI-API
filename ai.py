@@ -6,10 +6,9 @@ from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_community.vectorstores import FAISS
-import faiss
-from transformers import AutoTokenizer, AutoModel
-import torch
+from tempfile import mkdtemp
+import shutil
+import os
 
 model_version = "llama3.1"
 
@@ -47,6 +46,7 @@ def parse_response(response):
 
 def process_w_pdf(checklist_input, pdf_filename):
     file_path = "documents/" + pdf_filename
+    print("PRINTING PDF NAME AND PATH: " + file_path)
     loader = PyPDFLoader(file_path)
     docs = loader.load()
 
@@ -56,7 +56,9 @@ def process_w_pdf(checklist_input, pdf_filename):
 
     splits = text_splitter.split_documents(docs)
 
-    vectorstore = Chroma.from_documents(documents=splits, embedding=HuggingFaceEmbeddings(model_name="BAAI/bge-small-en-v1.5", model_kwargs = {'device':'cuda'} ))
+    chroma_temp_dir = mkdtemp()
+
+    vectorstore = Chroma.from_documents(documents=splits, embedding=HuggingFaceEmbeddings(model_name="BAAI/bge-small-en-v1.5", model_kwargs = {'device':'cuda'} ), persist_directory=chroma_temp_dir)
     
     retriever = vectorstore.as_retriever()
 
@@ -79,4 +81,19 @@ def process_w_pdf(checklist_input, pdf_filename):
     rag_chain = create_retrieval_chain(retriever, question_answer_chain)
     results = rag_chain.invoke({"input": "Give a justification for your answer. The regulation for comparing with the user submission (context) is the following: " + checklist_input})
 
+    shutil.rmtree(chroma_temp_dir, ignore_errors=True)
+    cleanup_documents_folder('documents/')
+
     return item_approval(results['answer'])
+
+def cleanup_documents_folder(directory):
+    #Delete all files in the specified directory.
+    for filename in os.listdir(directory):
+        file_path = os.path.join(directory, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)  # Remove the file or link
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)  # Remove the directory and its contents
+        except Exception as e:
+            print(f'Failed to delete {file_path}. Reason: {e}')

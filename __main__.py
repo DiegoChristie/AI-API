@@ -1,8 +1,11 @@
 from flask import Flask, request, jsonify
 from ai import *
-import base64
+import os
+import time
 
 app = Flask(__name__)
+
+UPLOAD_FOLDER = 'documents'
 
 @app.route('/string_compliance_check', methods=['POST'])
 def string_compliance_check():
@@ -22,23 +25,33 @@ def string_compliance_check():
 @app.route('/pdf_compliance_check', methods=['POST'])
 def pdf_compliance_check():
     if request.method == 'POST':
-        # Extract prompt from the received JSON
-        data = request.json
-        checklist_input = data.get('checklist_input', '')
+        # Check if the request contains a file
+        if 'pdf_file' not in request.files:
+            return "No file part", 400
 
-        pdf_data = data.get('file')  # Extract Base64 encoded PDF data
-        pdf_filename = data.get('filename', 'uploaded.pdf')  # Extract filename, default to 'uploaded.pdf'
+        # Get the file object
+        file = request.files['pdf_file']
+        
+        # Get the file name
+        file_name = file.filename
 
-        if pdf_data:
-            # Decode the Base64 string to binary data
-            pdf_binary = base64.b64decode(pdf_data)
+        timestamp = str(int(time.time()))
+        file_name_with_timestamp = f"{timestamp}_{file_name}"
+        
+        # Read the binary data from the file
+        #pdf_binary = file.read()
 
-            # Save the PDF to a file (optional)
-            with open(pdf_filename, 'wb') as pdf_file:
-                pdf_file.write(pdf_binary)
+        checklist_input = request.form.get('checklist_input')
+        # Define the path to save the file (inside the uploads folder)
 
+        save_path = os.path.join(UPLOAD_FOLDER, file_name_with_timestamp)
+        
+        # Save the file to the specified folder
+        file.save(save_path)
+
+        
         # Process the prompt (this is where you'd integrate your AI processing logic)
-        response = process_w_pdf(checklist_input, pdf_filename)
+        response = process_w_pdf(checklist_input, file_name_with_timestamp)
 
         # Return the response in JSON format
         return jsonify({'sentiment': response[0],'response': response[1]})
