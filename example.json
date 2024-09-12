@@ -1,0 +1,6 @@
+{  
+    "files_input": ["https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf",
+              "https://pdfobject.com/pdf/sample.pdf"],
+    "user_text_input": "nosotros tenemos x politica de bla bla bla",
+    "checklist_input": "Deben tener una politica de bla bla bla"
+}
