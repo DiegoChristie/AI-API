@@ -11,7 +11,7 @@ import shutil
 import os
 import requests
 
-model_version = "llama3.1:70b-instruct-q5_K_M"
+model_version = "llama3.1:8b"
 
 def process_w_ai(checklist_input, user_text_input, files_input):
     pdf_folder_path = "pdf_documents/"

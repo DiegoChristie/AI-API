@@ -22,6 +22,18 @@ def pdf_compliance_check():
 
         # Return the response in JSON format
         return jsonify({'sentiment': response[0],'response': response[1]})
+    
+@app.route('/ai_compliance_check_test_positive', methods=['POST'])
+def ai_compliance_check_test_positive():
+    if request.method == 'POST':
+        # Return the response in JSON format
+        return jsonify({'response': 'todo gucci','sentiment': 'Positive'})
+    
+@app.route('/ai_compliance_check_test_negative', methods=['POST'])
+def ai_compliance_check_test_negative():
+    if request.method == 'POST':
+        # Return the response in JSON format
+        return jsonify({'response': 'todo malucci','sentiment': 'Negative'})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=8080)
