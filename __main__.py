@@ -8,6 +8,7 @@ app = Flask(__name__)
 UPLOAD_PDF_FOLDER = 'pdf_documents'
 UPLOAD_IMAGE_FOLDER = 'image_documents'
 
+#Main endpoint that receives the user's input (text), including pdf files (List of URLs), and the regulation/checklist to compare.
 @app.route('/ai_compliance_check', methods=['POST'])
 def pdf_compliance_check():
     if request.method == 'POST':
@@ -22,13 +23,15 @@ def pdf_compliance_check():
 
         # Return the response in JSON format
         return jsonify({'sentiment': response[0],'response': response[1]})
-    
+
+#Testing endpoint that returns a Positive sentiment
 @app.route('/ai_compliance_check_test_positive', methods=['POST'])
 def ai_compliance_check_test_positive():
     if request.method == 'POST':
         # Return the response in JSON format
         return jsonify({'response': 'todo gucci','sentiment': 'Positive'})
-    
+
+#Testing endpoint that returns a Negative sentiment   
 @app.route('/ai_compliance_check_test_negative', methods=['POST'])
 def ai_compliance_check_test_negative():
     if request.method == 'POST':
