@@ -36,4 +36,4 @@ def ai_compliance_check_test_negative():
         return jsonify({'response': 'todo malucci','sentiment': 'Negative'})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True, port=8080)
+    app.run(host='0.0.0.0', debug=True, port=7575)
